@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Happy Birthday Asmita</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --rose:#e8637a;--blush:#f7c5d0;--deep:#1a0a12;
+    --wine:#5c1a32;--cream:#fff5f7;--gold:#f4c97a;
+    --soft:rgba(232,99,122,0.15);
+  }
+  html,body{width:100%;height:100%;font-family:'Inter',sans-serif;background:var(--deep);color:var(--cream);overflow-x:hidden}
+  /* TOP BAR */
+  #topbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:flex-end;align-items:center;padding:14px 28px;background:linear-gradient(to bottom,rgba(26,10,18,0.95),transparent)}
+  .listen-btn{display:flex;align-items:center;gap:8px;background:var(--rose);color:#fff;border:none;border-radius:50px;padding:10px 22px;font-size:0.9rem;font-weight:500;cursor:pointer;letter-spacing:0.04em;box-shadow:0 4px 20px rgba(232,99,122,0.5);transition:transform 0.2s,box-shadow 0.2s}
+  .listen-btn:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(232,99,122,0.7)}
+  .listen-btn svg{width:16px;height:16px;fill:#fff}
+  /* STARS */
+  #stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+  .star{position:absolute;border-radius:50%;background:#fff;opacity:0;animation:twinkle var(--d,3s) var(--delay,0s) infinite ease-in-out}
+  @keyframes twinkle{0%,100%{opacity:0;transform:scale(0.5)}50%{opacity:var(--op,0.8);transform:scale(1)}}
+  /* MAIN */
+  #main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px 40px;text-align:center}
+  /* COUNTDOWN */
+  #countdown-wrap h2{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.1rem,3vw,1.5rem);color:var(--blush);margin-bottom:40px;letter-spacing:0.06em}
+  #countdown{display:flex;gap:clamp(14px,3vw,36px);justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+  .unit{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .unit-num{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,9vw,6rem);font-weight:700;line-height:1;background:linear-gradient(135deg,var(--cream),var(--blush));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(247,197,208,0.3))}
+  .unit-label{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--rose);font-weight:500}
+  .colon{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,9vw,6rem);line-height:1;color:var(--rose);opacity:0.6;animation:blink 1s infinite;align-self:flex-start;padding-top:4px}
+  @keyframes blink{0%,49%{opacity:0.6}50%,100%{opacity:0.1}}
+  .until-note{font-size:0.8rem;color:rgba(247,197,208,0.5);letter-spacing:0.1em;margin-top:10px}
+  /* BIRTHDAY */
+  #birthday-wrap{display:none;flex-direction:column;align-items:center;gap:24px}
+  #birthday-wrap.active{display:flex;animation:fadeIn 1.5s ease forwards}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+  .wish-label{font-size:0.8rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--rose);font-weight:500}
+  .wish-name{font-family:'Playfair Display',serif;font-size:clamp(3rem,12vw,8rem);font-weight:700;background:linear-gradient(135deg,var(--gold),var(--rose),var(--blush));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.05;animation:shimmer 3s infinite linear;background-size:200%}
+  @keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
+  .wish-sub{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1rem,3vw,1.6rem);color:var(--blush);max-width:480px;line-height:1.6}
+  /* PETALS */
+  .petal{position:fixed;pointer-events:none;z-index:5;font-size:1.4rem;animation:fall linear infinite;opacity:0.85}
+  @keyframes fall{0%{transform:translateY(-40px) rotate(0deg);opacity:0.9}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+  /* MUSIC PANEL */
+  #musicPanel{position:fixed;inset:0;z-index:200;background:rgba(20,5,12,0.97);backdrop-filter:blur(16px);display:none;flex-direction:column;overflow:hidden}
+  #musicPanel.open{display:flex;animation:slideUp 0.4s cubic-bezier(0.4,0,0.2,1)}
+  @keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+  .panel-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid rgba(232,99,122,0.15);flex-shrink:0}
+  .panel-header h3{font-family:'Playfair Display',serif;font-style:italic;font-size:1.2rem;color:var(--blush)}
+  #closePanel{background:none;border:none;cursor:pointer;color:var(--rose);font-size:1.5rem;line-height:1;padding:4px}
+  /* LOCKED STATE */
+  #lockedMsg{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 30px;text-align:center;gap:18px}
+  .lock-icon{font-size:3.2rem;animation:lockBob 2s ease-in-out infinite}
+  @keyframes lockBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  #lockedMsg h4{font-family:'Playfair Display',serif;font-style:italic;font-size:1.4rem;color:var(--blush)}
+  #lockedMsg p{font-size:0.85rem;color:rgba(247,197,208,0.55);line-height:1.7;max-width:280px}
+  #lockCountdown{display:flex;gap:10px;margin-top:8px}
+  .lc-unit{display:flex;flex-direction:column;align-items:center;gap:4px}
+  .lc-num{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--rose)}
+  .lc-label{font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(247,197,208,0.4)}
+  .lc-col{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--rose);opacity:0.5;align-self:flex-start;padding-top:2px;animation:blink 1s infinite}
+  /* PLAYER */
+  #playerView{display:none;flex-direction:column;flex:1;overflow:hidden}
+  #nowPlaying{display:flex;flex-direction:column;align-items:center;padding:28px 20px 20px;flex-shrink:0}
+  #albumArt{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--wine),var(--rose));display:flex;align-items:center;justify-content:center;font-size:3.2rem;box-shadow:0 0 0 8px rgba(232,99,122,0.15),0 20px 60px rgba(232,99,122,0.3);margin-bottom:18px}
+  #albumArt.spinning{animation:spin 8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  #nowTitle{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--cream);text-align:center;margin-bottom:4px}
+  #nowArtist{font-size:0.8rem;color:var(--rose);letter-spacing:0.05em;text-align:center;margin-bottom:20px}
+  #progressWrap{width:100%;max-width:340px;display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+  #progressBar{width:100%;height:3px;background:rgba(255,255,255,0.1);border-radius:3px;cursor:pointer;appearance:none;accent-color:var(--rose)}
+  .time-row{display:flex;justify-content:space-between;font-size:0.7rem;color:rgba(247,197,208,0.5)}
+  #controls{display:flex;align-items:center;justify-content:center;gap:24px;margin-bottom:8px}
+  .ctrl-btn{background:none;border:none;cursor:pointer;color:var(--blush);font-size:1.2rem;transition:color 0.2s,transform 0.15s;padding:8px}
+  .ctrl-btn:hover{color:var(--rose);transform:scale(1.15)}
+  #playPauseBtn{width:52px;height:52px;border-radius:50%;background:var(--rose);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#fff;box-shadow:0 6px 24px rgba(232,99,122,0.5);transition:transform 0.15s,box-shadow 0.2s}
+  #playPauseBtn:hover{transform:scale(1.08);box-shadow:0 8px 32px rgba(232,99,122,0.7)}
+  /* PLAYLIST */
+  #playlist{flex:1;overflow-y:auto;padding:0 12px 20px}
+  #playlist::-webkit-scrollbar{width:4px}
+  #playlist::-webkit-scrollbar-track{background:transparent}
+  #playlist::-webkit-scrollbar-thumb{background:var(--wine);border-radius:4px}
+  .song-item{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:12px;cursor:pointer;transition:background 0.2s;margin-bottom:4px}
+  .song-item:hover{background:var(--soft)}
+  .song-item.active{background:rgba(232,99,122,0.2)}
+  .song-num{width:22px;text-align:center;font-size:0.75rem;color:rgba(247,197,208,0.4);flex-shrink:0}
+  .song-item.active .song-num{color:var(--rose)}
+  .song-emoji{font-size:1.3rem;flex-shrink:0}
+  .song-info{flex:1;min-width:0}
+  .song-title{font-size:0.9rem;font-weight:500;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .song-artist{font-size:0.72rem;color:rgba(247,197,208,0.5);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .song-item.active .song-title{color:var(--rose)}
+  .upload-hint{text-align:center;padding:16px 20px;font-size:0.75rem;color:rgba(247,197,208,0.3);border-top:1px solid rgba(232,99,122,0.08);flex-shrink:0;line-height:1.6}
+  @media(max-width:480px){#controls{gap:16px}#albumArt{width:110px;height:110px;font-size:2.4rem}}
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<div id="topbar">
+  <button class="listen-btn" onclick="openMusic()">
+    <svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+    Listen
+  </button>
+</div>
+
+<div id="main">
+  <div id="countdown-wrap">
+    <h2>Something beautiful is coming&hellip;</h2>
+    <div id="countdown">
+      <div class="unit"><span class="unit-num" id="cd-days">00</span><span class="unit-label">Days</span></div>
+      <span class="colon">:</span>
+      <div class="unit"><span class="unit-num" id="cd-hours">00</span><span class="unit-label">Hours</span></div>
+      <span class="colon">:</span>
+      <div class="unit"><span class="unit-num" id="cd-mins">00</span><span class="unit-label">Mins</span></div>
+      <span class="colon">:</span>
+      <div class="unit"><span class="unit-num" id="cd-secs">00</span><span class="unit-label">Secs</span></div>
+    </div>
+    <p class="until-note">Until 18 June 2026 &middot; Midnight</p>
+  </div>
+
+  <div id="birthday-wrap">
+    <p class="wish-label">Happy Birthday</p>
+    <h1 class="wish-name">Asmita</h1>
+    <p class="wish-sub">May every moment of this day sparkle as brightly as you do &#x1F338;</p>
+  </div>
+</div>
+
+<div id="musicPanel">
+  <div class="panel-header">
+    <h3>&#x1F3B5; Just for you, Asmita</h3>
+    <button id="closePanel" onclick="closeMusic()" title="Close">&#x2715;</button>
+  </div>
+
+  <!-- LOCKED: shown during countdown -->
+  <div id="lockedMsg">
+    <div class="lock-icon">&#x1F512;</div>
+    <h4>Songs unlock on your birthday!</h4>
+    <p>These melodies are waiting just for you, Asmita. They will play the moment the clock hits zero &#x2728;</p>
+    <div id="lockCountdown">
+      <div class="lc-unit"><span class="lc-num" id="lc-days">00</span><span class="lc-label">Days</span></div>
+      <span class="lc-col">:</span>
+      <div class="lc-unit"><span class="lc-num" id="lc-hours">00</span><span class="lc-label">Hrs</span></div>
+      <span class="lc-col">:</span>
+      <div class="lc-unit"><span class="lc-num" id="lc-mins">00</span><span class="lc-label">Min</span></div>
+      <span class="lc-col">:</span>
+      <div class="lc-unit"><span class="lc-num" id="lc-secs">00</span><span class="lc-label">Sec</span></div>
+    </div>
+  </div>
+
+  <!-- PLAYER: shown after countdown -->
+  <div id="playerView">
+    <div id="nowPlaying">
+      <div id="albumArt">&#x1F339;</div>
+      <div id="nowTitle">Select a song</div>
+      <div id="nowArtist">Your playlist</div>
+      <div id="progressWrap">
+        <input type="range" id="progressBar" min="0" max="100" value="0" oninput="seekTo(this.value)" />
+        <div class="time-row"><span id="timeNow">0:00</span><span id="timeTot">0:00</span></div>
+      </div>
+      <div id="controls">
+        <button class="ctrl-btn" onclick="prevSong()" title="Previous">&#x23EE;</button>
+        <button id="playPauseBtn" onclick="togglePlay()">&#x25B6;</button>
+        <button class="ctrl-btn" onclick="nextSong()" title="Next">&#x23ED;</button>
+      </div>
+    </div>
+    <div id="playlist"></div>
+    <div class="upload-hint">
+      &#x1F4A1; Open <strong>index.html</strong> in a code editor and fill in the <code>songs</code> array with your 20 song paths &amp; titles.
+    </div>
+  </div>
+</div>
+
+<audio id="audioEl"></audio>
+
+<script>
+/* STARS */
+(function(){
+  var c=document.getElementById('stars');
+  for(var i=0;i<160;i++){
+    var s=document.createElement('div');s.className='star';
+    var sz=Math.random()*2.5+0.5;
+    s.style.cssText='width:'+sz+'px;height:'+sz+'px;top:'+Math.random()*100+'%;left:'+Math.random()*100+'%;--d:'+(Math.random()*4+2).toFixed(1)+'s;--delay:'+(Math.random()*5).toFixed(1)+'s;--op:'+(Math.random()*0.6+0.3).toFixed(2)+';';
+    c.appendChild(s);
+  }
+})();
+
+/* COUNTDOWN + UNLOCK */
+var TARGET=new Date('2026-06-18T00:00:00');
+var unlocked=false;
+
+function pad(n){return String(n).padStart(2,'0');}
+
+function tick(){
+  var now=new Date();
+  var diff=TARGET-now;
+  if(diff<=0){
+    if(!unlocked)unlock();
+    return;
+  }
+  var days=Math.floor(diff/86400000);
+  var hours=Math.floor((diff%86400000)/3600000);
+  var mins=Math.floor((diff%3600000)/60000);
+  var secs=Math.floor((diff%60000)/1000);
+
+  document.getElementById('cd-days').textContent=pad(days);
+  document.getElementById('cd-hours').textContent=pad(hours);
+  document.getElementById('cd-mins').textContent=pad(mins);
+  document.getElementById('cd-secs').textContent=pad(secs);
+
+  document.getElementById('lc-days').textContent=pad(days);
+  document.getElementById('lc-hours').textContent=pad(hours);
+  document.getElementById('lc-mins').textContent=pad(mins);
+  document.getElementById('lc-secs').textContent=pad(secs);
+}
+
+function unlock(){
+  unlocked=true;
+  document.getElementById('countdown-wrap').style.display='none';
+  document.getElementById('birthday-wrap').classList.add('active');
+  startPetals();
+  document.getElementById('lockedMsg').style.display='none';
+  document.getElementById('playerView').style.display='flex';
+}
+
+tick();
+setInterval(tick,1000);
+
+/* PETALS */
+function startPetals(){
+  var e=['&#x1F338;','&#x1F33A;','&#x1F339;','&#x1F496;','&#x2728;','&#x1F38A;','&#x1F389;','&#x1F49D;','&#x1F337;','&#x2B50;','&#x1F4AB;','&#x1F388;'];
+  for(var i=0;i<35;i++){
+    (function(idx){
+      setTimeout(function(){
+        var p=document.createElement('div');p.className='petal';
+        p.innerHTML=e[Math.floor(Math.random()*e.length)];
+        p.style.cssText='left:'+Math.random()*100+'%;font-size:'+(Math.random()*1.2+0.9).toFixed(1)+'rem;animation-duration:'+(Math.random()*5+5).toFixed(1)+'s;animation-delay:'+(Math.random()*8).toFixed(1)+'s;';
+        document.body.appendChild(p);
+        p.addEventListener('animationiteration',function(){p.style.left=Math.random()*100+'%';});
+      },idx*200);
+    })(i);
+  }
+}
+
+/* SONGS — replace with your 20 songs */
+var songs=[
+  {title:"Song Title 1", artist:"Artist Name",src:"songs/song01.mp3",emoji:"&#x1F338;"},
+  {title:"Song Title 2", artist:"Artist Name",src:"songs/song02.mp3",emoji:"&#x1F339;"},
+  {title:"Song Title 3", artist:"Artist Name",src:"songs/song03.mp3",emoji:"&#x1F496;"},
+  {title:"Song Title 4", artist:"Artist Name",src:"songs/song04.mp3",emoji:"&#x1F33A;"},
+  {title:"Song Title 5", artist:"Artist Name",src:"songs/song05.mp3",emoji:"&#x2728;"},
+  {title:"Song Title 6", artist:"Artist Name",src:"songs/song06.mp3",emoji:"&#x1F3B5;"},
+  {title:"Song Title 7", artist:"Artist Name",src:"songs/song07.mp3",emoji:"&#x1F337;"},
+  {title:"Song Title 8", artist:"Artist Name",src:"songs/song08.mp3",emoji:"&#x1F49D;"},
+  {title:"Song Title 9", artist:"Artist Name",src:"songs/song09.mp3",emoji:"&#x1F3B6;"},
+  {title:"Song Title 10",artist:"Artist Name",src:"songs/song10.mp3",emoji:"&#x2B50;"},
+  {title:"Song Title 11",artist:"Artist Name",src:"songs/song11.mp3",emoji:"&#x1F4AB;"},
+  {title:"Song Title 12",artist:"Artist Name",src:"songs/song12.mp3",emoji:"&#x1F338;"},
+  {title:"Song Title 13",artist:"Artist Name",src:"songs/song13.mp3",emoji:"&#x1F339;"},
+  {title:"Song Title 14",artist:"Artist Name",src:"songs/song14.mp3",emoji:"&#x1F380;"},
+  {title:"Song Title 15",artist:"Artist Name",src:"songs/song15.mp3",emoji:"&#x1F496;"},
+  {title:"Song Title 16",artist:"Artist Name",src:"songs/song16.mp3",emoji:"&#x1F33A;"},
+  {title:"Song Title 17",artist:"Artist Name",src:"songs/song17.mp3",emoji:"&#x1F38A;"},
+  {title:"Song Title 18",artist:"Artist Name",src:"songs/song18.mp3",emoji:"&#x1F389;"},
+  {title:"Song Title 19",artist:"Artist Name",src:"songs/song19.mp3",emoji:"&#x1F49D;"},
+  {title:"Song Title 20",artist:"Artist Name",src:"songs/song20.mp3",emoji:"&#x1F337;"}
+];
+
+var currentIdx=-1,isPlaying=false;
+var audio=document.getElementById('audioEl');
+
+function buildPlaylist(){
+  var list=document.getElementById('playlist');
+  list.innerHTML='';
+  songs.forEach(function(s,i){
+    var el=document.createElement('div');
+    el.className='song-item';el.id='song-'+i;
+    el.innerHTML='<span class="song-num">'+(i+1)+'</span><span class="song-emoji">'+s.emoji+'</span><div class="song-info"><div class="song-title">'+s.title+'</div><div class="song-artist">'+s.artist+'</div></div>';
+    el.onclick=function(){playSong(i);};
+    list.appendChild(el);
+  });
+}
+
+function playSong(idx){
+  currentIdx=idx;
+  audio.src=songs[idx].src;
+  audio.play().catch(function(){});
+  isPlaying=true;
+  updateUI();
+}
+
+function updateUI(){
+  var s=songs[currentIdx]||{};
+  document.getElementById('nowTitle').textContent=s.title||'Select a song';
+  document.getElementById('nowArtist').textContent=s.artist||'Your playlist';
+  document.getElementById('albumArt').innerHTML=s.emoji||'&#x1F3B5;';
+  document.getElementById('albumArt').classList.toggle('spinning',isPlaying);
+  document.getElementById('playPauseBtn').innerHTML=isPlaying?'&#x23F8;':'&#x25B6;';
+  document.querySelectorAll('.song-item').forEach(function(el,i){el.classList.toggle('active',i===currentIdx);});
+  var active=document.getElementById('song-'+currentIdx);
+  if(active)active.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+
+function togglePlay(){
+  if(currentIdx<0){playSong(0);return;}
+  if(isPlaying){audio.pause();isPlaying=false;}
+  else{audio.play().catch(function(){});isPlaying=true;}
+  updateUI();
+}
+function nextSong(){playSong(currentIdx<songs.length-1?currentIdx+1:0);}
+function prevSong(){
+  if(audio.currentTime>3){audio.currentTime=0;return;}
+  playSong(currentIdx>0?currentIdx-1:songs.length-1);
+}
+function seekTo(val){if(audio.duration)audio.currentTime=(val/100)*audio.duration;}
+function fmtTime(s){return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');}
+
+audio.addEventListener('timeupdate',function(){
+  if(!audio.duration)return;
+  document.getElementById('progressBar').value=(audio.currentTime/audio.duration)*100;
+  document.getElementById('timeNow').textContent=fmtTime(audio.currentTime);
+  document.getElementById('timeTot').textContent=fmtTime(audio.duration);
+});
+audio.addEventListener('ended',nextSong);
+audio.addEventListener('play',function(){isPlaying=true;updateUI();});
+audio.addEventListener('pause',function(){isPlaying=false;updateUI();});
+
+function openMusic(){document.getElementById('musicPanel').classList.add('open');}
+function closeMusic(){document.getElementById('musicPanel').classList.remove('open');}
+
+buildPlaylist();
+</script>
+</body>
+</html>
